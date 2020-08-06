@@ -1,5 +1,7 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
+const ENTER_BUTTON_KEY_CODE = 13;
 
 export default class NewTaskForm extends Component {
   constructor() {
@@ -18,7 +20,7 @@ export default class NewTaskForm extends Component {
   onKeyDown = (evt) => {
     const { onKeyDown } = this.props;
     const { inputText } = this.state;
-    if (evt.keyCode === 13) {
+    if (evt.keyCode === ENTER_BUTTON_KEY_CODE) {
       onKeyDown(inputText);
       this.setState({
         inputText: '',

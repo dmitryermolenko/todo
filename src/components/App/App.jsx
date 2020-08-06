@@ -6,12 +6,12 @@ import Footer from '../Footer/Footer';
 export default class App extends Component {
   constructor() {
     super();
-    this.id = 0;
+    this.id = 4;
     this.state = {
       todoData: [
-        { id: 15, label: 'Drink Coffee', isCompleted: false, isEditing: false },
-        { id: 25, label: 'Drink Tee', isCompleted: false, isEditing: false },
-        { id: 35, label: 'Drink Milk', isCompleted: false, isEditing: false },
+        { id: 1, label: 'Drink Coffee', isCompleted: false, isEditing: false, creatingTime: new Date() },
+        { id: 2, label: 'Drink Tee', isCompleted: false, isEditing: false, creatingTime: new Date() },
+        { id: 3, label: 'Drink Milk', isCompleted: false, isEditing: false, creatingTime: new Date() },
       ],
       filterName: 'all',
     };
@@ -20,10 +20,7 @@ export default class App extends Component {
   /* удалить задачу */
   deleteTask = (id) => {
     this.setState(({ todoData }) => {
-      const todoDataCopy = [...todoData];
-
-      const idx = todoDataCopy.findIndex((el) => el.id === id);
-      todoDataCopy.splice(idx, 1);
+      const todoDataCopy = todoData.filter((el) => el.id !== id);
 
       return {
         todoData: todoDataCopy,
@@ -34,10 +31,12 @@ export default class App extends Component {
   /* добавить задачу */
   addTask = (text) => {
     const newTask = {
-      id: this.id + 1,
+      // eslint-disable-next-line no-plusplus
+      id: this.id++,
       label: text,
       isCompleted: false,
       isEditing: false,
+      creatingTime: new Date(),
     };
 
     this.setState(({ todoData }) => {
@@ -49,20 +48,16 @@ export default class App extends Component {
     });
   };
 
-  toggleProperty = (id, arr, propName) => {
-    const idx = arr.findIndex((el) => el.id === id);
-
-    const oldTask = arr[idx];
-    const updatedTask = { ...oldTask, [propName]: !oldTask[propName] };
-
-    return [...arr.slice(0, idx), updatedTask, ...arr.slice(idx + 1)];
+  /* обновить данные */
+  updateTaks = (id, arr, propName) => {
+    return arr.map((el) => (el.id === id ? { ...el, [propName]: !el[propName] } : el));
   };
 
   /* показать/скрыть поле ввода для редактирования */
   toggleEditMode = (id) => {
     this.setState(({ todoData }) => {
       return {
-        todoData: this.toggleProperty(id, todoData, 'isEditing'),
+        todoData: this.updateTaks(id, todoData, 'isEditing'),
       };
     });
   };
@@ -71,7 +66,7 @@ export default class App extends Component {
   toggleCompletedStatus = (id) => {
     this.setState(({ todoData }) => {
       return {
-        todoData: this.toggleProperty(id, todoData, 'isCompleted'),
+        todoData: this.updateTaks(id, todoData, 'isCompleted'),
       };
     });
   };
@@ -98,9 +93,7 @@ export default class App extends Component {
   /* очистить все завершенные задачи */
   clearCompletedTasks = () => {
     this.setState(({ todoData }) => {
-      const uncompletedTasks = todoData.filter((task) => !task.isCompleted);
-
-      const updatedTodoData = [...uncompletedTasks];
+      const updatedTodoData = todoData.filter((task) => !task.isCompleted);
 
       return {
         todoData: updatedTodoData,
@@ -111,10 +104,9 @@ export default class App extends Component {
   /* редактировать задачу */
   editLabel = (id, text) => {
     this.setState(({ todoData }) => {
-      const updatedTodoData = this.toggleProperty(id, todoData, 'isEditing');
-
-      const updatedTask = updatedTodoData.find((task) => task.id === id);
-      updatedTask.label = text;
+      const updatedTodoData = todoData.map((el) =>
+        el.id === id ? { ...el, label: text, isEditing: !el.isEditing } : el
+      );
 
       return {
         todoData: updatedTodoData,
