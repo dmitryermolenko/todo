@@ -49,7 +49,7 @@ export default class App extends Component {
   };
 
   /* обновить данные */
-  updateTaks = (id, arr, propName) => {
+  getUpdatedTasks = (id, arr, propName) => {
     return arr.map((el) => (el.id === id ? { ...el, [propName]: !el[propName] } : el));
   };
 
@@ -57,7 +57,7 @@ export default class App extends Component {
   toggleEditMode = (id) => {
     this.setState(({ todoData }) => {
       return {
-        todoData: this.updateTaks(id, todoData, 'isEditing'),
+        todoData: this.getUpdatedTasks(id, todoData, 'isEditing'),
       };
     });
   };
@@ -66,7 +66,7 @@ export default class App extends Component {
   toggleCompletedStatus = (id) => {
     this.setState(({ todoData }) => {
       return {
-        todoData: this.updateTaks(id, todoData, 'isCompleted'),
+        todoData: this.getUpdatedTasks(id, todoData, 'isCompleted'),
       };
     });
   };
@@ -77,7 +77,7 @@ export default class App extends Component {
       case 'all':
         return tasks;
       case 'active':
-        return tasks.filter((task) => !task.isCompleted);
+        return tasks.filter((task) => /* !task.isCompleted */ task.isCompleted === false);
       case 'completed':
         return tasks.filter((task) => task.isCompleted);
       default:
@@ -87,7 +87,7 @@ export default class App extends Component {
 
   /* отобразать активный фильтр */
   onFilterChange = (filterName) => {
-    this.setState({ filterName });
+    this.setState(() => ({ filterName }));
   };
 
   /* очистить все завершенные задачи */
@@ -107,6 +107,13 @@ export default class App extends Component {
       const updatedTodoData = todoData.map((el) =>
         el.id === id ? { ...el, label: text, isEditing: !el.isEditing } : el
       );
+
+      /* const updatedTodoData = this.getUpdatedTasks(id, todoData, 'isEditing');
+      updatedTodoData.forEach(el => {
+        if (el.id === id) {
+          return el.label = text;
+        } 
+      }); */
 
       return {
         todoData: updatedTodoData,

@@ -21,7 +21,7 @@ const Task = (props) => {
   return (
     <li className={clsx({ completed: isCompleted }, { editing: isEditing })}>
       <div className="view">
-        <input className="toggle" type="checkbox" onClick={onCheckboxToggle} />
+        <input className="toggle" type="checkbox" onClick={onCheckboxToggle} checked={!!isCompleted} />
         <label>
           <span className="description">{label}</span>
           <TimeIndicator creatingTime={creatingTime} />
