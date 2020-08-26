@@ -29,7 +29,7 @@ export default class App extends Component {
   };
 
   /* добавить задачу */
-  addTask = (text) => {
+  addTask = (text, minutes, seconds) => {
     const newTask = {
       // eslint-disable-next-line no-plusplus
       id: this.id++,
@@ -37,6 +37,8 @@ export default class App extends Component {
       isCompleted: false,
       isEditing: false,
       creatingTime: new Date(),
+      minutesTimer: minutes,
+      secondsTimer: seconds,
     };
 
     this.setState(({ todoData }) => {
@@ -107,13 +109,6 @@ export default class App extends Component {
       const updatedTodoData = todoData.map((el) =>
         el.id === id ? { ...el, label: text, isEditing: !el.isEditing } : el
       );
-
-      /* const updatedTodoData = this.getUpdatedTasks(id, todoData, 'isEditing');
-      updatedTodoData.forEach(el => {
-        if (el.id === id) {
-          return el.label = text;
-        } 
-      }); */
 
       return {
         todoData: updatedTodoData,

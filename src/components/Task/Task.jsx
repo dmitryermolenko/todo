@@ -16,6 +16,8 @@ const Task = (props) => {
     onEditButtonClick,
     onLabelEdit,
     onBlur,
+    minutesTimer,
+    secondsTimer,
   } = props;
 
   return (
@@ -23,7 +25,12 @@ const Task = (props) => {
       <div className="view">
         <input className="toggle" type="checkbox" onClick={onCheckboxToggle} checked={!!isCompleted} />
         <label>
-          <span className="description">{label}</span>
+          <span className="title">{label}</span>
+          <span className="description">
+            <button type="button" className="icon icon-play" aria-label="play" />
+            <button type="button" className="icon icon-pause" aria-label="pause" />
+            <p>{`${minutesTimer}:${secondsTimer}`}</p>
+          </span>
           <TimeIndicator creatingTime={creatingTime} />
         </label>
         <button type="button" className="icon icon-edit" onClick={onEditButtonClick} aria-label="edit" />
@@ -45,6 +52,8 @@ Task.propTypes = {
   onEditButtonClick: PropTypes.func.isRequired,
   onLabelEdit: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
+  minutesTimer: PropTypes.string.isRequired,
+  secondsTimer: PropTypes.string.isRequired,
 };
 
 export default Task;
