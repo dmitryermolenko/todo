@@ -9,9 +9,33 @@ export default class App extends Component {
     this.id = 4;
     this.state = {
       todoData: [
-        { id: 1, label: 'Drink Coffee', isCompleted: false, isEditing: false, creatingTime: new Date() },
-        { id: 2, label: 'Drink Tee', isCompleted: false, isEditing: false, creatingTime: new Date() },
-        { id: 3, label: 'Drink Milk', isCompleted: false, isEditing: false, creatingTime: new Date() },
+        {
+          id: 1,
+          label: 'Drink Coffee',
+          isCompleted: false,
+          isEditing: false,
+          creatingTime: new Date(),
+          minutesTimer: '01',
+          secondsTimer: '30',
+        },
+        {
+          id: 2,
+          label: 'Drink Tee',
+          isCompleted: false,
+          isEditing: false,
+          creatingTime: new Date(),
+          minutesTimer: '01',
+          secondsTimer: '00',
+        },
+        {
+          id: 3,
+          label: 'Drink Milk',
+          isCompleted: false,
+          isEditing: false,
+          creatingTime: new Date(),
+          minutesTimer: '00',
+          secondsTimer: '30',
+        },
       ],
       filterName: 'all',
     };

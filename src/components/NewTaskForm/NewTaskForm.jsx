@@ -15,18 +15,21 @@ export default class NewTaskForm extends Component {
     };
   }
 
-  onInputTextChange = (evt) => {
-    this.setState({
-      inputText: evt.target.value,
-    });
-  };
-
-  onInputMinutesChange = (evt) => {
-    this.setState({ inputMinutes: evt.target.value });
-  };
-
-  onInputSecondsChange = (evt) => {
-    this.setState({ inputSeconds: evt.target.value });
+  onInputChange = (evt) => {
+    switch (evt.target.id) {
+      case 'minutes':
+        this.setState({
+          inputMinutes: evt.target.value,
+        });
+        break;
+      case 'seconds':
+        this.setState({ inputSeconds: evt.target.value });
+        break;
+      default:
+        this.setState({
+          inputText: evt.target.value,
+        });
+    }
   };
 
   onKeyDown = (evt) => {
@@ -53,26 +56,29 @@ export default class NewTaskForm extends Component {
     return (
       <form className="new-todo-form">
         <input
+          id="text"
           className="new-todo"
           placeholder="What needs to be done?"
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
-          onChange={this.onInputTextChange}
+          onChange={this.onInputChange}
           onKeyDown={this.onKeyDown}
           value={inputText}
         />
         <input
+          id="minutes"
           className="new-todo-form__timer"
           placeholder="Min"
           autoFocus
-          onChange={this.onInputMinutesChange}
+          onChange={this.onInputChange}
           value={inputMinutes}
         />
         <input
+          id="seconds"
           className="new-todo-form__timer"
           placeholder="Sec"
           autoFocus
-          onChange={this.onInputSecondsChange}
+          onChange={this.onInputChange}
           value={inputSeconds}
         />
       </form>
