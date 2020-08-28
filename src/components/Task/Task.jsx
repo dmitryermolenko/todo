@@ -8,8 +8,8 @@ export default class Task extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      minutesTimer: Number(props.minutesTimer),
-      secondsTimer: Number(props.secondsTimer),
+      minutesTimer: props.minutesTimer,
+      secondsTimer: props.secondsTimer,
     };
 
     this.timerID = null;
@@ -27,6 +27,8 @@ export default class Task extends Component {
 
   updateTimer = () => {
     let { minutesTimer, secondsTimer } = this.state;
+    minutesTimer = Number(minutesTimer);
+    secondsTimer = Number(secondsTimer);
     if (secondsTimer) {
       secondsTimer -= 1;
     } else if (!secondsTimer && minutesTimer) {
@@ -36,7 +38,15 @@ export default class Task extends Component {
       clearInterval(this.timerID);
     }
 
-    this.setState(() => ({ minutesTimer, secondsTimer }));
+    this.setState(() => {
+      const minutes = this.transformTimer(minutesTimer);
+      const seconds = this.transformTimer(secondsTimer);
+
+      return {
+        minutesTimer: minutes,
+        secondsTimer: seconds,
+      };
+    });
   };
 
   pauseTimer = () => {
@@ -44,17 +54,11 @@ export default class Task extends Component {
     this.timerID = null;
   };
 
-  // преобразовать значения таймера из числа в строку
+  // добавить допольнительный 0, если число однозначное
   transformTimer = (value) => {
-    let timerValue;
-    // eslint-disable-next-line no-restricted-globals
-    if (isNaN(value)) {
-      timerValue = '00';
-    } else {
-      timerValue = String(value);
-    }
+    let timerValue = value;
 
-    if (timerValue.length === 1) {
+    if (timerValue < 10) {
       timerValue = `0${timerValue}`;
     }
     return timerValue;
@@ -74,10 +78,7 @@ export default class Task extends Component {
       onBlur,
     } = this.props;
 
-    let { minutesTimer, secondsTimer } = this.state;
-    minutesTimer = this.transformTimer(minutesTimer);
-    secondsTimer = this.transformTimer(secondsTimer);
-
+    const { minutesTimer, secondsTimer } = this.state;
     return (
       <li className={clsx({ completed: isCompleted }, { editing: isEditing })}>
         <div className="view">

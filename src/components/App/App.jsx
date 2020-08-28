@@ -1,62 +1,53 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
 
-export default class App extends Component {
-  constructor() {
-    super();
-    this.id = 4;
-    this.state = {
-      todoData: [
-        {
-          id: 1,
-          label: 'Drink Coffee',
-          isCompleted: false,
-          isEditing: false,
-          creatingTime: new Date(),
-          minutesTimer: '01',
-          secondsTimer: '30',
-        },
-        {
-          id: 2,
-          label: 'Drink Tee',
-          isCompleted: false,
-          isEditing: false,
-          creatingTime: new Date(),
-          minutesTimer: '01',
-          secondsTimer: '00',
-        },
-        {
-          id: 3,
-          label: 'Drink Milk',
-          isCompleted: false,
-          isEditing: false,
-          creatingTime: new Date(),
-          minutesTimer: '00',
-          secondsTimer: '30',
-        },
-      ],
-      filterName: 'all',
-    };
-  }
+function App() {
+  let initialID = 4;
+
+  const [todoData, setTodoData] = useState([
+    {
+      id: 1,
+      label: 'Drink Coffee',
+      isCompleted: false,
+      isEditing: false,
+      creatingTime: new Date(),
+      minutesTimer: '01',
+      secondsTimer: '30',
+    },
+    {
+      id: 2,
+      label: 'Drink Tee',
+      isCompleted: false,
+      isEditing: false,
+      creatingTime: new Date(),
+      minutesTimer: '01',
+      secondsTimer: '00',
+    },
+    {
+      id: 3,
+      label: 'Drink Milk',
+      isCompleted: false,
+      isEditing: false,
+      creatingTime: new Date(),
+      minutesTimer: '00',
+      secondsTimer: '30',
+    },
+  ]);
+
+  const [filterName, setFilterName] = useState('all');
 
   /* удалить задачу */
-  deleteTask = (id) => {
-    this.setState(({ todoData }) => {
-      const todoDataCopy = todoData.filter((el) => el.id !== id);
-
-      return {
-        todoData: todoDataCopy,
-      };
-    });
+  const deleteTask = (id) => {
+    setTodoData((prevTodoData) => prevTodoData.filter((el) => el.id !== id));
   };
 
   /* добавить задачу */
-  addTask = (text, minutes, seconds) => {
+  const addTask = (text, minutes, seconds) => {
     const newTask = {
       // eslint-disable-next-line no-plusplus
-      id: this.id++,
+      id: initialID++,
       label: text,
       isCompleted: false,
       isEditing: false,
@@ -65,45 +56,33 @@ export default class App extends Component {
       secondsTimer: seconds,
     };
 
-    this.setState(({ todoData }) => {
-      const todoDataCopy = [...todoData, newTask];
-
-      return {
-        todoData: todoDataCopy,
-      };
+    setTodoData((prevTodoData) => {
+      return [...prevTodoData, newTask];
     });
   };
 
   /* обновить данные */
-  getUpdatedTasks = (id, arr, propName) => {
+  const getUpdatedTasks = (id, arr, propName) => {
     return arr.map((el) => (el.id === id ? { ...el, [propName]: !el[propName] } : el));
   };
 
   /* показать/скрыть поле ввода для редактирования */
-  toggleEditMode = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: this.getUpdatedTasks(id, todoData, 'isEditing'),
-      };
-    });
+  const toggleEditMode = (id) => {
+    setTodoData((prevTodoData) => getUpdatedTasks(id, prevTodoData, 'isEditing'));
   };
 
   /* отметить задачу как выполненная */
-  toggleCompletedStatus = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: this.getUpdatedTasks(id, todoData, 'isCompleted'),
-      };
-    });
+  const toggleCompletedStatus = (id) => {
+    setTodoData((prevTodoData) => getUpdatedTasks(id, prevTodoData, 'isCompleted'));
   };
 
   /* показать отфильтрованные задачи */
-  filterTasks = (tasks, filterName) => {
-    switch (filterName) {
+  const filterTasks = (tasks, filter) => {
+    switch (filter) {
       case 'all':
         return tasks;
       case 'active':
-        return tasks.filter((task) => /* !task.isCompleted */ task.isCompleted === false);
+        return tasks.filter((task) => task.isCompleted === false);
       case 'completed':
         return tasks.filter((task) => task.isCompleted);
       default:
@@ -112,62 +91,53 @@ export default class App extends Component {
   };
 
   /* отобразать активный фильтр */
-  onFilterChange = (filterName) => {
-    this.setState(() => ({ filterName }));
+  const changeFilter = (filter) => {
+    setFilterName(() => filter);
   };
 
   /* очистить все завершенные задачи */
-  clearCompletedTasks = () => {
-    this.setState(({ todoData }) => {
-      const updatedTodoData = todoData.filter((task) => !task.isCompleted);
-
-      return {
-        todoData: updatedTodoData,
-      };
-    });
+  const clearCompletedTasks = () => {
+    setTodoData((prevTodoData) => prevTodoData.filter((task) => !task.isCompleted));
   };
 
   /* редактировать задачу */
-  editLabel = (id, text) => {
-    this.setState(({ todoData }) => {
-      const updatedTodoData = todoData.map((el) =>
+  const editLabel = (id, text) => {
+    setTodoData((prevTodoData) => {
+      const updatedTodoData = prevTodoData.map((el) =>
         el.id === id ? { ...el, label: text, isEditing: !el.isEditing } : el
       );
 
-      return {
-        todoData: updatedTodoData,
-      };
+      return updatedTodoData;
     });
   };
 
-  render() {
-    const { todoData, filterName } = this.state;
-    const filteredTasks = this.filterTasks(todoData, filterName);
-    const todoCount = todoData.filter((task) => !task.isCompleted).length;
+  const filteredTasks = filterTasks(todoData, filterName);
+  const todoCount = todoData.filter((task) => !task.isCompleted).length;
 
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <NewTaskForm onKeyDown={this.addTask} />
-        </header>
-        <section className="main">
-          <TaskList
-            todos={filteredTasks}
-            onDeleteButtonClick={this.deleteTask}
-            onCheckboxToggle={this.toggleCompletedStatus}
-            onEditButtonClick={this.toggleEditMode}
-            onLabelEdit={this.editLabel}
-            onBlur={this.toggleEditMode}
-          />
-          <Footer
-            filterName={filterName}
-            onFilterChange={this.onFilterChange}
-            onClearButtonClick={this.clearCompletedTasks}
-            todoCount={todoCount}
-          />
-        </section>
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <NewTaskForm onKeyPress={addTask} />
+      </header>
+      <section className="main">
+        <TaskList
+          todos={filteredTasks}
+          onDeleteButtonClick={deleteTask}
+          onCheckboxToggle={toggleCompletedStatus}
+          onEditButtonClick={toggleEditMode}
+          onLabelEdit={editLabel}
+          onBlur={toggleEditMode}
+        />
+        <Footer
+          filterName={filterName}
+          onFilterChange={changeFilter}
+          onClearButtonClick={clearCompletedTasks}
+          todoCount={todoCount}
+        />
       </section>
-    );
-  }
+    </section>
+  );
 }
+
+export default App;

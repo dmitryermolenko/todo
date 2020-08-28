@@ -1,91 +1,88 @@
 /* eslint-disable jsx-a11y/no-autofocus */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const ENTER_BUTTON_KEY_CODE = 13;
 const DEFAULT_TIMER = '00';
 
-export default class NewTaskForm extends Component {
-  constructor() {
-    super();
-    this.state = {
-      inputText: '',
-      inputMinutes: '',
-      inputSeconds: '',
-    };
-  }
+function NewTaskForm(props) {
+  const [todoTitle, setTodoTitle] = useState('');
+  const [minutesTimer, setMinutesTimer] = useState('');
+  const [secondsTimer, setSecondsTimer] = useState('');
 
-  onInputChange = (evt) => {
+  const checkTimerFormat = (value, inputID) => {
+    let timerValue = null;
+
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(Number(value))) {
+      timerValue = '';
+    } else if (inputID === 'seconds' && Number(value) > 59) {
+      timerValue = '';
+    } else {
+      timerValue = value;
+    }
+
+    return timerValue;
+  };
+
+  const changeInput = (evt) => {
     switch (evt.target.id) {
       case 'minutes':
-        this.setState({
-          inputMinutes: evt.target.value,
-        });
+        setMinutesTimer(checkTimerFormat(evt.target.value, evt.target.id));
         break;
       case 'seconds':
-        this.setState({ inputSeconds: evt.target.value });
+        setSecondsTimer(checkTimerFormat(evt.target.value, evt.target.id));
         break;
       default:
-        this.setState({
-          inputText: evt.target.value,
-        });
+        setTodoTitle(evt.target.value);
     }
   };
 
-  onKeyDown = (evt) => {
-    const { onKeyDown } = this.props;
-    const { inputText } = this.state;
-    let { inputMinutes, inputSeconds } = this.state;
+  const addTask = (evt) => {
+    const { onKeyPress } = props;
 
-    if (evt.keyCode === ENTER_BUTTON_KEY_CODE) {
-      onKeyDown(
-        inputText,
-        (inputMinutes = inputMinutes || DEFAULT_TIMER),
-        (inputSeconds = inputSeconds || DEFAULT_TIMER)
-      );
-      this.setState({
-        inputText: '',
-        inputMinutes: '',
-        inputSeconds: '',
-      });
+    if (evt.key === 'Enter') {
+      onKeyPress(todoTitle, minutesTimer || DEFAULT_TIMER, secondsTimer || DEFAULT_TIMER);
+
+      setTodoTitle('');
+      setMinutesTimer('');
+      setSecondsTimer('');
     }
   };
 
-  render() {
-    const { inputText, inputMinutes, inputSeconds } = this.state;
-    return (
-      <form className="new-todo-form">
-        <input
-          id="text"
-          className="new-todo"
-          placeholder="What needs to be done?"
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
-          onChange={this.onInputChange}
-          onKeyDown={this.onKeyDown}
-          value={inputText}
-        />
-        <input
-          id="minutes"
-          className="new-todo-form__timer"
-          placeholder="Min"
-          autoFocus
-          onChange={this.onInputChange}
-          value={inputMinutes}
-        />
-        <input
-          id="seconds"
-          className="new-todo-form__timer"
-          placeholder="Sec"
-          autoFocus
-          onChange={this.onInputChange}
-          value={inputSeconds}
-        />
-      </form>
-    );
-  }
+  return (
+    <form className="new-todo-form">
+      <input
+        id="text"
+        className="new-todo"
+        placeholder="What needs to be done?"
+        // eslint-disable-next-line jsx-a11y/no-autofocus
+        autoFocus
+        onChange={changeInput}
+        onKeyPress={addTask}
+        value={todoTitle}
+      />
+      <input
+        id="minutes"
+        className="new-todo-form__timer"
+        placeholder="Min"
+        autoFocus
+        onChange={changeInput}
+        value={minutesTimer}
+      />
+      <input
+        id="seconds"
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        autoFocus
+        onChange={changeInput}
+        value={secondsTimer}
+      />
+    </form>
+  );
 }
 
 NewTaskForm.propTypes = {
-  onKeyDown: PropTypes.func.isRequired,
+  onKeyPress: PropTypes.func.isRequired,
 };
+
+export default NewTaskForm;
