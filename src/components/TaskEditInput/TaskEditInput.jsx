@@ -1,44 +1,34 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default class TaskEditInput extends Component {
-  constructor(props) {
-    super();
-    this.state = {
-      editedLabel: props.label,
-    };
-  }
+function TaskEditInput(props) {
+  const { label } = props;
+  const [editedLabel, setEditedLabel] = useState(label);
 
-  onInputTextChange = (evt) => {
-    this.setState({
-      editedLabel: evt.target.value,
-    });
+  const onInputTextChange = (evt) => {
+    setEditedLabel(evt.target.value);
   };
 
-  onKeyDown = (evt) => {
-    const { id, onLabelEdit } = this.props;
-    const { editedLabel } = this.state;
-    if (evt.keyCode === 13) {
+  const onKeyPress = (evt) => {
+    const { id, onLabelEdit } = props;
+    if (evt.key === 'Enter') {
       onLabelEdit(id, editedLabel);
     }
   };
 
-  render() {
-    const { onBlur } = this.props;
-    const { editedLabel } = this.state;
-    return (
-      <input
-        type="text"
-        className="edit"
-        onKeyDown={(evt) => this.onKeyDown(evt)}
-        onBlur={onBlur}
-        onChange={this.onInputTextChange}
-        value={editedLabel}
-        // eslint-disable-next-line jsx-a11y/no-autofocus
-        autoFocus
-      />
-    );
-  }
+  const { onBlur } = props;
+  return (
+    <input
+      type="text"
+      className="edit"
+      onKeyPress={(evt) => onKeyPress(evt)}
+      onBlur={onBlur}
+      onChange={onInputTextChange}
+      value={editedLabel}
+      // eslint-disable-next-line jsx-a11y/no-autofocus
+      autoFocus
+    />
+  );
 }
 
 TaskEditInput.propTypes = {
@@ -47,3 +37,5 @@ TaskEditInput.propTypes = {
   onLabelEdit: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
 };
+
+export default TaskEditInput;
