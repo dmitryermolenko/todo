@@ -4,7 +4,7 @@ import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
 
 function App() {
-  let initialID = 4;
+  const [taskID, setTaskID] = useState(4);
 
   const [todoData, setTodoData] = useState([
     {
@@ -47,7 +47,7 @@ function App() {
   const addTask = (text, minutes, seconds) => {
     const newTask = {
       // eslint-disable-next-line no-plusplus
-      id: initialID++,
+      id: taskID,
       label: text,
       isCompleted: false,
       isEditing: false,
@@ -59,6 +59,7 @@ function App() {
     setTodoData((prevTodoData) => {
       return [...prevTodoData, newTask];
     });
+    setTaskID((prev) => prev + 1);
   };
 
   /* обновить данные */
