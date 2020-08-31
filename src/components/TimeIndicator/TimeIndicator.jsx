@@ -1,34 +1,22 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
-export default class TimeIndicator extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      creatingTime: props.creatingTime,
-      timeAgo: formatDistanceToNow(props.creatingTime, { includeSeconds: true }),
-    };
-    this.intervalId = null;
-  }
+function TimeIndicator(props) {
+  const { creatingTime } = props;
+  const [timeAgo, setTimeAgo] = useState(formatDistanceToNow(creatingTime, { includeSeconds: true }));
 
-  componentDidMount() {
-    this.intervalId = setInterval(() => this.timer(), 5000);
-  }
+  const timer = () => {
+    setTimeAgo(() => formatDistanceToNow(creatingTime, { includeSeconds: true }));
+  };
 
-  componentWillUnmount() {
-    clearInterval(this.intervalId);
-  }
+  useEffect(() => {
+    const id = setInterval(() => timer(), 5000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  timer() {
-    const { creatingTime } = this.state;
-    this.setState(() => ({ timeAgo: formatDistanceToNow(creatingTime, { includeSeconds: true }) }));
-  }
-
-  render() {
-    const { timeAgo } = this.state;
-    return <span className="created">created {timeAgo} ago</span>;
-  }
+  return <span className="created">created {timeAgo} ago</span>;
 }
 
 TimeIndicator.defaultProps = {
@@ -38,3 +26,5 @@ TimeIndicator.defaultProps = {
 TimeIndicator.propTypes = {
   creatingTime: PropTypes.instanceOf(Date),
 };
+
+export default TimeIndicator;
