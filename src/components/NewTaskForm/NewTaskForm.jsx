@@ -13,12 +13,14 @@ function NewTaskForm(props) {
     let timerValue = null;
 
     // eslint-disable-next-line no-restricted-globals
-    if (isNaN(Number(value))) {
+    if (value === '0' || isNaN(Number(value))) {
       timerValue = '';
     } else if (inputID === 'seconds' && Number(value) > 59) {
       timerValue = '';
+    } else if (value.length < 2 && value !== '0') {
+      timerValue = `0${value}`;
     } else {
-      timerValue = value;
+      timerValue = Number(value);
     }
 
     return timerValue;
