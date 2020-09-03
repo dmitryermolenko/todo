@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 function TasksFilter(props) {
-  const buttons = [
-    { name: 'all', label: 'All' },
-    { name: 'active', label: 'Active' },
-    { name: 'completed', label: 'Completed' },
-  ];
+  const buttons = useMemo(() => {
+    return [
+      { name: 'all', label: 'All' },
+      { name: 'active', label: 'Active' },
+      { name: 'completed', label: 'Completed' },
+    ];
+  }, []);
 
   const { filterName, onFilterChange } = props;
   const btns = buttons.map((button) => {
